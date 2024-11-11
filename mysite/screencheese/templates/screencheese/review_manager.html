@@ -1,0 +1,93 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screencheese - Your Reviews</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+
+    <script src="https://kit.fontawesome.com/887fbb00f2.js" crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+    <section class="section" title="navbar">
+        <nav class="navbar is-fixed-top">
+
+            <div class="navbar-menu">
+                <div class="navbar-start"> 
+                    <div class="navbar-item">
+                        <a href="{% url 'screencheese:homepage'%}"><h1 class="title"><strong>Screencheese</strong></h1></a>
+                    </div>
+                    <a class="navbar-item " href="{% url 'screencheese:review_manager'%}">Your Reviews</a>
+
+                    <a class="navbar-item" href="{% url 'screencheese:all_movies'%}">All Movies</a>
+
+
+                    <form class="navbar-item mt-4" action="{% url 'screencheese:search' %}" method="get">
+                        <div class="control">
+                            <input class="input is-rounded" type="text" name="movie name" placeholder="Search for a movie" required>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Account</a>
+                        <div class="navbar-dropdown">
+                            <p class="navbar-item">Signed in as {{request.user}}</p>
+                            <hr class="navbar-divider">
+                            <p class="navbar-item"><a class="" href="{% url 'screencheese:log_out' %}"><strong>Log out</strong></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    <section class="section" title="content">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="box" title="user's reviews">
+                    {%if user_reviews%}
+                        <h1 class="title">Your reviews</h1>
+                        {%for review in user_reviews%}
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <h1 class="title is-4">{{review.movie}}</h1>
+                                            <strong><p>Rating - {{review.rating}}</p></strong>
+                                            {%if review.text%}
+                                                <p>
+                                                    {{review.text}}
+                                                </p>
+                                            {%endif%}
+                                        </div>
+                                    </div>
+                                </div>
+                                <footer class="card-footer">
+                                    <div class="card-footer-item">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-heart fa-xl" style="color: #972020;"></i>
+                                            </span>
+                                            <span>{{review.likers.all | length}}</span>
+                                        </span>
+                                    </div>
+                                    <p class="card-footer-item">{{review.pub_date}}</p>
+                                    <p class="card-footer-item"><a class="button is-warning is-dark" href="{% url 'screencheese:delete_review' review.movie.id  %}"><strong>Delete</strong></a></p>
+                                </footer>
+                            </div>
+                        {%endfor%}
+                    {%else%}
+                        <h1 class="title">You have no reviews</h1>
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

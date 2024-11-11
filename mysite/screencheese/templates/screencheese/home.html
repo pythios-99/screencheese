@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screencheese-Homepage</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+
+</head>
+<body>
+
+    <section class="section" title="navbar">
+        <nav class="navbar is-fixed-top">
+
+            <div class="navbar-menu">
+                <div class="navbar-start"> 
+                    <div class="navbar-item">
+                        <a href="{% url 'screencheese:homepage'%}"><h1 class="title"><strong>Screencheese</strong></h1></a>
+                    </div>
+                    <a class="navbar-item " href="{% url 'screencheese:review_manager'%}">Your Reviews</a>
+
+                    <a class="navbar-item" href="{% url 'screencheese:all_movies'%}">All Movies</a>
+
+
+                    <form class="navbar-item mt-4" action="{% url 'screencheese:search' %}" method="get">
+                        <div class="control">
+                            <input class="input is-rounded" type="text" name="movie name" placeholder="Search for a movie" required>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Account</a>
+                        <div class="navbar-dropdown">
+                            <p class="navbar-item">Signed in as {{request.user}}</p>
+                            <hr class="navbar-divider">
+                            <p class="navbar-item"><a class="" href="{% url 'screencheese:log_out' %}"><strong>Log out</strong></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+
+
+
+
+    <section class="section" title="content">
+
+        <div class="columns is-centered">
+            <div class="column is-three-quarters">
+
+                {%if recently_released %}
+                <div class="box">
+                    <H1 class="title">Recent Releases</H1>
+                    
+                        <ul>
+                            {%for movie in recently_released %}
+                                <a href="{% url 'screencheese:movie_page' movie.id %}"><img src="{{movie.poster_path}}"></a>
+                            {%endfor%}
+                        </ul>
+                    
+                </div>
+                {%endif%}
+
+
+
+                <div class="box">
+                    <h1 class="title">Top rated</h1>
+                    
+                        {%for movie in top_rated%} 
+                            <a href="{% url 'screencheese:movie_page' movie.id %}"><img src="{{movie.poster_path}}"></a>
+                        {%endfor%}
+                    
+                </div>
+
+
+
+                {%if recommendations%}
+                    <div class="box">
+                        <h1 class="title">Your recommendations</h1>
+                        <ul>
+                            {%for movie in recommendations%} 
+                                <a href="{% url 'screencheese:movie_page' movie.id %}"><img src="{{movie.poster_path}}"></a>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                {%endif%}
+
+
+
+
+
+            </div>
+
+        </div>
+    </section>
+
+
+        
+    
+
+</body>
+</html>

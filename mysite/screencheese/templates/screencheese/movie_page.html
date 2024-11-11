@@ -1,0 +1,183 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screencheese-{{movie.movie_name}}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'screencheese/style.css' %}">
+
+    <script src="https://kit.fontawesome.com/887fbb00f2.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    
+    <section class="section" title="navbar">
+        <nav class="navbar is-fixed-top">
+
+            <div class="navbar-menu">
+                <div class="navbar-start"> 
+                    <div class="navbar-item">
+                        <a href="{% url 'screencheese:homepage'%}"><h1 class="title"><strong>Screencheese</strong></h1></a>
+                    </div>
+                    <a class="navbar-item " href="{% url 'screencheese:review_manager'%}">Your Reviews</a>
+
+                    <a class="navbar-item" href="{% url 'screencheese:all_movies'%}">All Movies</a>
+
+
+                    <form class="navbar-item mt-4" action="{% url 'screencheese:search' %}" method="get">
+                        <div class="control">
+                            <input class="input is-rounded" type="text" name="movie name" placeholder="Search for a movie" required>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Account</a>
+                        <div class="navbar-dropdown">
+                            <p class="navbar-item">Signed in as {{request.user}}</p>
+                            <hr class="navbar-divider">
+                            <p class="navbar-item"><a class="" href="{% url 'screencheese:log_out' %}"><strong>Log out</strong></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </section>
+    
+    <section class="section" title="content">
+        <div class="columns is-centered">
+
+            <div class="column is-one-quarter">
+                <img src="{{movie.poster_path}}">
+
+
+                {%if colour == 'red' %}
+                    <progress class="progress is-small is-danger mt-6" value="{{percentage}}" max="100"></progress>
+                {%endif%}
+
+                {%if colour == 'yellow' %}
+                    <progress class="progress is-small is-warning mt-6" value="{{percentage}}" max="100"></progress>
+                {%endif%}
+            
+                {%if colour == 'green' %}
+                    <progress class="progress is-small is-success mt-6" value="{{percentage}}" max="100"></progress>
+                {%endif%}
+                {{movie.avg_rating}}/10
+            </div>
+
+            <div class="column is-three-quarters">
+                <div class="box" title="movie info">
+                    <h1 class="title">{{movie.movie_name}}</h1>
+                    <p>Average rating - {{movie.avg_rating}}</p>
+                    <p>Film studio - {{movie.film_studio}}</p>
+                    <p>Director - {{movie.director}}</p>
+                    <p>Genre - {%for genre in genres%} {{genre}}, {%endfor%}</p>
+                    <p>release date - {{movie.release_date}}</p>
+
+                    {%if relevancy_score%}
+                        <p class="mt-2">Relevancy Score - {{relevancy_score}}</p>
+                    {%endif%}
+
+                    <p class="mt-3">
+                        {{movie.description}}
+                    </p>
+            
+
+                </div>
+
+                {%if user_review%}
+                    <div class="box" title="user's review">
+                        <div class="content">
+                            <h1 class="title">Your Review</h1>
+                            <strong><p>Rating - {{user_review.rating}}</p></strong>
+                            <p>
+                                {{user_review.text}}
+                            </p>
+                            <a class="button is-warning is-dark" href="{% url 'screencheese:delete_review' movie.id%}">Delete?</a>
+                        </div>
+                    </div>
+
+                {%else%}
+                    {% if release_check %}
+                        <form class="box" action="{%url 'screencheese:review_publisher' movie.id%}" method="get">
+                            <h1 class="title"> Write your review</h1>
+
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input is-rounded" type="number" name="review_score" min="0" max="10.1" step="0.1" placeholder="Rating..." required>
+                                </div>
+                            </div>
+                            
+                            <textarea class="textarea" name="review_text" id="review_text" cols="70" rows="10" placeholder="Type your review here..."></textarea>
+
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-link">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    
+                    {%else%}
+                        <div class="box">
+                            <h4 class="title is-4">This movie isn't released yet, you'll be able to write a review for it when it comes to theaters.</h4>
+                        </div>
+                    {%endif%}
+                {%endif%}
+
+                {%if all_reviews%}
+                    <div class="box">
+                        <h1 class="title">Public Reviews</h1>
+                        {%for review in all_reviews%}
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <h1 class="title is-4">{{review.author}}</h1>
+                                            <strong><p>Rating - {{review.rating}}</p></strong>
+                                            <p>
+                                                {{review.text}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <footer class="card-footer">
+                                    {%if request.user in review.likers.all%}
+                                        <a class="card-footer-item" href="{%url 'screencheese:unlike' review.id %}">
+                                            <span class="icon-text">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-heart fa-xl" style="color: #972020;"></i>
+                                                </span>
+                                                <span>  {{review.likers.all | length}}</span>
+                                            </span>
+                                        </a>
+                                    {%else%}
+                                        <a class="card-footer-item" href="{%url 'screencheese:like' review.id %}">
+                                            <span class="icon-text">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-heart fa-xl" style="color: #6f7071;"></i>
+                                                </span>
+                                                <span>  {{review.likers.all | length}}</span>
+                                            </span>
+                                        </a> 
+                                    {%endif%}
+
+                                        <div class="card-footer-item">
+                                            <p>{{review.pub_date}}</p>
+                                        </div>
+                                </footer>
+                            </div>
+                        {%endfor%}
+                    </div>
+                {%endif%}
+            </div>
+        </div>
+    </section>
+</body>
+</html>

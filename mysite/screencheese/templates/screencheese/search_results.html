@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screencheese-Search Results</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+</head>
+<body>
+    <section class="section" title="navbar">
+        <nav class="navbar is-fixed-top">
+
+            <div class="navbar-menu">
+                <div class="navbar-start"> 
+                    <div class="navbar-item">
+                        <a href="{% url 'screencheese:homepage'%}"><h1 class="title"><strong>Screencheese</strong></h1></a>
+                    </div>
+                    <a class="navbar-item " href="{% url 'screencheese:review_manager'%}">Your Reviews</a>
+
+                    <a class="navbar-item" href="{% url 'screencheese:all_movies'%}">All Movies</a>
+
+
+                    <form class="navbar-item mt-4" action="{% url 'screencheese:search' %}" method="get">
+                        <div class="control">
+                            <input class="input is-rounded" type="text" name="movie name" placeholder="Search for a movie" required>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Account</a>
+                        <div class="navbar-dropdown">
+                            <p class="navbar-item">Signed in as {{request.user}}</p>
+                            <hr class="navbar-divider">
+                            <p class="navbar-item"><a class="" href="{% url 'screencheese:log_out' %}"><strong>Log out</strong></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    <section class="section" title="content">
+
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <form class="box" action="{% url 'screencheese:search' %}" method="get">
+                    <H1 class="title">Search for Movies...</H1>
+
+                    <div class="field">
+                        <div class="control">
+                            <input class="input is-rounded" type="text" name="movie name" placeholder="Search for a movie" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-link">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column is-full">
+                <div class="column is-full">
+                    <h1 class="title">Search results for: {{movie_name}}</h1>
+
+
+                    
+                    {% for movie, movie_path in movies %}
+                        <a href="{% url 'screencheese:create_movie_page' movie %}"><img src="{{movie_path}}"></a>
+                    {%endfor%}
+
+                
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
