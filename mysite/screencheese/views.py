@@ -212,7 +212,7 @@ def create_movie_page (request,movie_id ) :
                 g = Genre.objects.create(genre_name=genre["name"])
                 genres.append(g)
         description = contents["overview"]
-        poster_path = f"https://image.tmdb.org/t/p/w300{contents["poster_path"]}"
+        poster_path = f"https://image.tmdb.org/t/p/w300{contents['poster_path']}"
         for person in credits_contents['crew'] :
             
             if person["job"] == "Director" :
